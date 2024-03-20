@@ -1,0 +1,117 @@
+1 - Minimum 1 philosophe. Assis autour d'une table.
+
+2 - Les philosophe alternent respectivement entre :
+	- Manger
+	- Penser
+	- Dormir
+
+3 - Il y as autant de fourchettes que de philosophe autour de la table.
+
+4 - Un philosphe prend sa fourchette droite et sa fourchette gauche 
+	pour pouvoir manger.
+
+5 - Apres avoir manger -> il dort.
+	Une fois reveille -> il pense ....
+	La simulation s'arrete lorsqu'un philosophe meurt de faim. 
+
+6 - Tout philosophe a besoin de manger et ne devrait jamais mourir de faim.
+
+----------------------------------------------------------------------------
+
+Liste des arguments:
+
+-> number_of_philosophers : Le nombre de philosophes et aussi le nombre
+ de fourchettes.
+
+-> time_to_die (en millisecondes) : Si un philosophe n'a pas commencé à
+ manger time_to_die millisecondes depuis le début de son dernier repas
+ ou le début de la simulation, il meurt.
+
+ -> time_to_eat (en millisecondes) : Le temps qu'il faut à un philosophe
+ pour manger. Pendant ce temps, ils devront tenir deux fourchettes.
+
+ -> time_to_sleep (en millisecondes) : Le temps qu'un philosophe passera
+ à dormir.
+
+ -> number_of_times_each_philosopher_must_eat (argument facultatif) : si tout les 
+  philosophes ont mangé au moins number_of_times_each_philosopher_must_eat fois, 
+  la simulation s'arrête. Si cela n'est pas précisé, la simulation s'arrête à la 
+  mort d'un philosophe.
+
+----------------------------------------------------------------------------
+
+- CHAQUES PHILOSOPHE POSSEDE UN NUMERO ALLANT DE 1 A number_of_philossophers.
+
+Le philosophe numéro 1 se trouve à côté du philosophe numéro
+number_of_philossophers.
+Tout autre nombre philosophe N se situe entre le nombre philosophe N - 1
+et le nombre philosophe N + 1.
+
+----------------------------------------------------------------------------
+
+• Tout changement d'état d'un philosophe doit être formaté comme suit :
+◦ timestamp_in_ms X a pris un fork
+◦ timestamp_in_ms X mange
+◦ timestamp_in_ms X est en veille
+◦ timestamp_in_ms X réfléchit
+◦ timestamp_in_ms X est mort
+Remplacez timestamp_in_ms par l'horodatage actuel en millisecondes et X
+par le numéro philosophe.
+
+• Un message d'état affiché ne doit pas être confondu avec un autre message.
+• Un message annonçant la mort d'un philosophe ne doit pas être affiché plus de 10 ms
+après la mort réelle du philosophe.
+
+----------------------------------------------------------------------------
+
+Program 				name philo
+
+Turn in files 			Makefile, *.h, *.c, in directory philo/
+
+Makefile				NAME, all, clean, fclean, re
+
+Arguments 				number_of_philosophers 
+						time_to_die time_to_eat
+						time_to_sleep
+						[number_of_times_each_philosopher_must_eat]
+ 
+External functs			memset, printf, malloc, free, write,
+						usleep, gettimeofday, pthread_create,
+						pthread_detach, pthread_join, pthread_mutex_init,
+						pthread_mutex_destroy, pthread_mutex_lock,
+						pthread_mutex_unlock
+
+Libft authorized 		No
+
+Description 			Philosophers with threads and mutexes
+
+----------------------------------------------------------------------------
+
+usleep 			-> usleep - Interromp le programme durant un nombre donné
+				   de microsecondes (1000000 microseconde vaut 1 secondes);
+				-> #include <unistd.h>
+				-> int usleep(useconds_t usec);
+
+gettimeofday 	-> gettimeofday, settimeofday - Lire/écrire l'heure actuelle 
+				-> #include <sys/time.h>
+				-> int gettimeofday(struct timeval *tv, struct timezone *tz);
+				
+				-> L'argument tv est une structure timeval comme suis et donne 
+				   le nombre de secondes et microsecondes écoulées 
+				   depuis le 1er janvier 1970 :
+
+							struct timeval {
+    							time_t      tv_sec;  /* secondes */
+    							suseconds_t tv_usec; /* microsecondes */
+							};
+				
+				-> L'argument tz est une structure timezone composée ainsi (souvent a NULL) :
+
+							struct timezone {
+								int tz_minuteswest; /* minutes à l'ouest de Greenwich  */
+								int tz_dsttime;     /* type de changement horaire      */
+							};
+
+pthread_create  -> pthread_create - Créer un nouveau thread  
+				-> #include <pthread.h>
+				-> int pthread_create(pthread_t * thread, pthread_attr_t * attr, void * (*start_routine)(void *), void * arg); 
