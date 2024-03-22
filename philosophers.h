@@ -1,7 +1,6 @@
 #ifndef		PHILOSOPHERS_H
 # define	PHILOSOPHERS_H
 
-
 /*printf*/
 # include <stdio.h>
 
@@ -17,8 +16,12 @@
 /*malloc*/
 # include <stdlib.h>
 
+/*thread*/
+# include <pthread.h>
+
 typedef struct s_philosophers
 {
+	unsigned int	id_philosphers;
 	unsigned int	number_of_philosophers;
 	unsigned int	time_to_die;
 	unsigned int	time_to_eat;
@@ -28,11 +31,14 @@ typedef struct s_philosophers
 
 typedef struct s_data
 {
-	t_philosophers *data_args;
+	pthread_t		thread;
+	int				*id_fork;
+	t_philosophers	*data_args;
 } t_data;
 
 /*philosophers_utils.c*/
 unsigned int	ft_atoi(const char *nptr);
+void			free_all(t_data *data);
 
 
 #endif 

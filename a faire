@@ -1,9 +1,11 @@
+				REGLES DE BASE
+
 1 - Minimum 1 philosophe. Assis autour d'une table.
 
 2 - Les philosophe alternent respectivement entre :
 	- Manger
-	- Penser
 	- Dormir
+	- Penser
 
 3 - Il y as autant de fourchettes que de philosophe autour de la table.
 
@@ -16,9 +18,17 @@
 
 6 - Tout philosophe a besoin de manger et ne devrait jamais mourir de faim.
 
-----------------------------------------------------------------------------
+7 - CHAQUES PHILOSOPHE POSSEDE UN NUMERO ALLANT DE 1 A number_of_philossophers.
 
-Liste des arguments:
+Le philosophe numéro 1 se trouve à côté du philosophe numéro
+number_of_philossophers.
+Tout autre nombre philosophe N se situe entre le nombre philosophe N - 1
+et le nombre philosophe N + 1.
+
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+
+				LISTE DES ARGUMENTS
 
 -> number_of_philosophers : Le nombre de philosophes et aussi le nombre
  de fourchettes.
@@ -38,31 +48,25 @@ Liste des arguments:
   la simulation s'arrête. Si cela n'est pas précisé, la simulation s'arrête à la 
   mort d'un philosophe.
 
-----------------------------------------------------------------------------
-
-- CHAQUES PHILOSOPHE POSSEDE UN NUMERO ALLANT DE 1 A number_of_philossophers.
-
-Le philosophe numéro 1 se trouve à côté du philosophe numéro
-number_of_philossophers.
-Tout autre nombre philosophe N se situe entre le nombre philosophe N - 1
-et le nombre philosophe N + 1.
-
-----------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
 
 • Tout changement d'état d'un philosophe doit être formaté comme suit :
-◦ timestamp_in_ms X a pris un fork
+◦ timestamp_in_ms X a pris une fourchette
 ◦ timestamp_in_ms X mange
-◦ timestamp_in_ms X est en veille
+◦ timestamp_in_ms X dort
 ◦ timestamp_in_ms X réfléchit
 ◦ timestamp_in_ms X est mort
-Remplacez timestamp_in_ms par l'horodatage actuel en millisecondes et X
+
+Remplacer timestamp_in_ms par l'horodatage actuel en millisecondes et X
 par le numéro philosophe.
 
 • Un message d'état affiché ne doit pas être confondu avec un autre message.
 • Un message annonçant la mort d'un philosophe ne doit pas être affiché plus de 10 ms
 après la mort réelle du philosophe.
 
-----------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
 
 Program 				name philo
 
@@ -85,12 +89,17 @@ Libft authorized 		No
 
 Description 			Philosophers with threads and mutexes
 
-----------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+
+				LES FONCTIONS
 
 usleep 			-> usleep - Interromp le programme durant un nombre donné
 				   de microsecondes (1000000 microseconde vaut 1 secondes);
 				-> #include <unistd.h>
 				-> int usleep(useconds_t usec);
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 gettimeofday 	-> gettimeofday, settimeofday - Lire/écrire l'heure actuelle 
 				-> #include <sys/time.h>
@@ -112,6 +121,29 @@ gettimeofday 	-> gettimeofday, settimeofday - Lire/écrire l'heure actuelle
 								int tz_dsttime;     /* type de changement horaire      */
 							};
 
-pthread_create  -> pthread_create - Créer un nouveau thread  
-				-> #include <pthread.h>
-				-> int pthread_create(pthread_t * thread, pthread_attr_t * attr, void * (*start_routine)(void *), void * arg); 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#include <pthread.h>
+pthread_create  	->	int pthread_create(pthread_t * thread, pthread_attr_t * attr, 
+						void * (*start_routine)(void *), void * arg); 
+					->	pthread_create - Créer un nouveau thread  
+
+pthread_join		-> 	int pthread_join (pthread_t th, void ** thread_return);
+					-> 	pthread_join   - Lorsque nous créons des threads puis nous laissons 
+						continuer par exemple la fonction main, nous prenons le risque de terminer 
+						le programme complètement sans avoir pu exécuter les threads. 
+				   		Nous devons en effet attendre que les différents threads créés se terminent. 
+						Pour cela, il existe la fonction pthread_join;
+
+Quand deux threads accèdent souvent à la même zone mémoire en même temps on appel ca une situation 
+de compétition ou un accès concurrent (« data race » en anglais).
+Pour eviter cela on utilise un mutex (abrégé de « mutual exclusion » en anglais, c’est à dire « exclusion mutuelle »).
+
+pthread_mutex_init 	-> 	int pthread_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *mutexattr);
+					-> 	mutex : le pointeur vers une variable de type pthread_mutex_t, le mutex qu’on souhaite initialiser.
+					   	mutexattr : un pointeur vers des attributs spécifiques pour le mutex. 
+						On ne se souciera pas de ce parametre ici, on mettra simplement NULL.
+					-> 	pthread_mutex_init()  - Initialise le mutex pointé par mutex 
+						selon les attributs de mutex spécifié par mutexattr. 
+						Si mutexattr vaut NULL, les paramètres par défaut sont utilisés.
+
