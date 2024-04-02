@@ -6,7 +6,7 @@
 /*   By: natrijau <natrijau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 12:16:33 by natrijau          #+#    #+#             */
-/*   Updated: 2024/03/22 11:36:16 by natrijau         ###   ########.fr       */
+/*   Updated: 2024/03/28 13:35:00 by natrijau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,37 +27,38 @@ unsigned int	ft_atoi(const char *nptr)
 	return (nb);
 }
 
-void	free_split(int	**tab)
+bool	its_integer(char *str)
 {
 	int	i;
 
 	i = 0;
-	while (tab[i])
+	if (!str)
+		return (false);	
+	while (str[i])
 	{
-		free(tab[i]);
+		if (str[i] > '9' || str[i] < '0')
+			return (false);
 		i++;
 	}
-	free(tab);
+	return (true);
+}
+bool	all_positiv_num(char **av)
+{
+	if (ft_atoi(av[1]) < 0
+		|| ft_atoi(av[2]) < 0
+			|| ft_atoi(av[3]) < 0
+				|| ft_atoi(av[4]) < 0)
+	return (false);
+	if (av[5] && ft_atoi(av[5]) <= 0)
+		return (false);
+	return (true);
 }
 
-void	free_all(t_data *data)
+long int current_time(void)
 {
-	if (!data)
-		return;
-	// if (data->data_args->number_of_philosophers)
-	// 	free(data->data_args->number_of_philosophers);
-	// if (data->data_args->time_to_die)
-	// 	free(data->data_args->time_to_die);
-	// if (data->data_args->time_to_eat)
-	// 	free(data->data_args->time_to_eat);
-	// if (data->data_args->time_to_sleep)
-	// 	free(data->data_args->time_to_sleep);
-	// if (data->data_args->number_of_times_each_philosopher_must_eat)
-	// 	free(data->data_args->number_of_times_each_philosopher_must_eat);
-	if (data->id_fork)
-		free(data->id_fork);
-	if (data->data_args)
-		free(data->data_args);		
-	// if (data)
-	// 	free(data);
+	struct timeval my_time;
+  	long int current_time;
+	gettimeofday(&my_time, NULL);
+	current_time = (my_time.tv_sec * 1000) + (my_time.tv_usec / 1000);
+	return(current_time);
 }

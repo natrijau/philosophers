@@ -1,6 +1,6 @@
 NAME	 = philosophers
-CFLAGS	 = -Wall -Wextra -Werror -g
-SRCS	 = philosophers.c philosophers_utils.c initialize.c 
+CFLAGS	 = -Wall -Wextra -Werror -gdwarf-4 -g
+SRCS	 = philosophers.c philosophers_utils.c free.c init.c ##test.c
 OBJS	 = ${SRCS:.c=.o}
 
 %.o: %.c 

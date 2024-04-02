@@ -6,182 +6,189 @@
 /*   By: natrijau <natrijau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 14:05:09 by natrijau          #+#    #+#             */
-/*   Updated: 2024/03/22 14:04:26 by natrijau         ###   ########.fr       */
+/*   Updated: 2024/04/02 16:56:31 by natrijau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
-// float time_diff(struct timeval *start, struct timeval *end) {
-//   return (end->tv_sec - start->tv_sec) + 1e-6 * (end->tv_usec - start->tv_usec);
-// }
 
-bool	its_integer(char *str)
-{
-	int	i;
-
-	i = 0;
-	if (!str)
-		return (false);	
-	while (str[i])
-	{
-		if (str[i] > '9' || str[i] < '0')
-			return (false);
-		i++;
-	}
-	return (true);
-}
-
-bool	init_arg(t_data *data, char **av)
+bool	check_arg(int ac, char **av)
 {
 	int	i;
 
 	i = 1;
+	if (ac != 5 && ac != 6)
+	{
+		printf("Invalid number of arguments !\n");
+		return (false);
+	}
 	while (av[i])
 	{
 		if (!its_integer(av[i]))
+		{
+			printf("One of the arguments is invalid !\n");
 			return (false);			
+		}
 		i++;
+	}	
+	if (!all_positiv_num(av))
+	{
+		printf("One of the arguments is invalid !\n");
+		return(false);
 	}
-	data->data_args->number_of_philosophers = ft_atoi(av[1]);	
-	data->data_args->time_to_die = ft_atoi(av[2]);	
-	data->data_args->time_to_eat = ft_atoi(av[3]);	
-	data->data_args->time_to_sleep = ft_atoi(av[4]);
-	if (av[5])
-		data->data_args->number_of_times_each_philosopher_must_eat = ft_atoi(av[5]);	
-	return (true);
+	return(true);
+}	
+
+void	check_dead(t_philosophers *philo, int flag)
+{
+	if (flag == 0)
+	{
+		if (philo->start_dead >= philo->time_to_die
+			|| philo->time_to_eat >= philo->time_to_die)
+		{
+			philo->alive = false;
+			philo->end_time = philo->time_to_die / 1000;
+		}
+		else
+			philo->start_dead = 0;
+	}
+	if (flag == 1)
+	{
+		philo->start_dead += philo->time_to_sleep + philo->time_to_eat;
+		if (philo->start_dead >= philo->time_to_die
+			|| philo->time_to_sleep >= philo->time_to_die)
+		{
+			philo->alive = false;
+			philo->end_time = philo->time_to_die / 1000;
+		}
+	}	
 }
 
-bool	check_arg(int ac, t_data *data)
+void	ft_usleep(t_philosophers *philo, long int mili_second)
 {
-	(void)data;
-	data->data_args = malloc(sizeof(t_philosophers));
-	if (ac == 5 || ac == 6)
-		return (true);
-	return(false);
-}	
+	(void) philo;
+	(void) mili_second;
+	struct timeval my_time;
+  	long int current_time;
+  	long int i;
+
+	gettimeofday(&my_time, NULL);
+	current_time = (my_time.tv_sec * 1000) + (my_time.tv_usec / 1000);
+	// printf("current time %u\n", philo->time_to_die / 1000);
+	i = 0;
+	// printf("i %ld\n", i);
+	
+	while (i < mili_second / 1000)
+	{
+		usleep(170);
+		gettimeofday(&my_time, NULL);
+		i = ((my_time.tv_sec * 1000) + (my_time.tv_usec / 1000)) - philo->start_time;
+		// printf("i %ld\n", i);
+	}
+}
+
+void	ft_eating(t_philosophers *philo)
+{
+	struct timeval my_time;
+  	long int current_time;
+	pthread_mutex_lock(&philo->my_fork);
+	pthread_mutex_lock(philo->next_fork);
+	pthread_mutex_lock(&philo->print);
+	gettimeofday(&my_time, NULL);
+	current_time = (my_time.tv_sec * 1000) + (my_time.tv_usec / 1000);	
+	printf("%ld\tLe philosophe %d take fork ! \n",current_time - philo->start_time,  philo->id_philosphers);
+	printf("%ld\tLe philosophe %d take second fork ! \n",current_time - philo->start_time,  philo->id_philosphers);
+	printf("%ld\tLe philosophe %d start eat \n",current_time - philo->start_time,  philo->id_philosphers);
+	philo->number_of_times_each_philosopher_must_eat--;
+	check_dead(philo, 0);
+	ft_usleep(philo, philo->time_to_eat);
+	pthread_mutex_unlock(&philo->print);
+	// usleep(philo->time_to_eat);
+	pthread_mutex_unlock(&philo->my_fork);
+	pthread_mutex_unlock(philo->next_fork);
+}
+
+void	sleeping(t_philosophers *philo)
+{
+	struct timeval my_time;
+  	long int current_time;
+	
+	pthread_mutex_lock(&philo->print);
+	gettimeofday(&my_time, NULL);
+	current_time = (my_time.tv_sec * 1000) + (my_time.tv_usec / 1000);
+	printf("%ld\tLe philosophe %d sleep !\n",current_time - philo->start_time, philo->id_philosphers);
+	check_dead(philo, 1);
+	ft_usleep(philo, philo->time_to_sleep);
+    // usleep(philo->time_to_sleep);
+	pthread_mutex_unlock(&philo->print);
+}
+
+void	thinking(t_philosophers *philo)
+{	struct timeval my_time;
+  	long int current_time;
+	pthread_mutex_lock(&philo->print);
+	gettimeofday(&my_time, NULL);
+	current_time = (my_time.tv_sec * 1000) + (my_time.tv_usec / 1000);
+	printf("%ld\tLe philosophe %d think !\n",(current_time - philo->start_time),  philo->id_philosphers);
+	pthread_mutex_unlock(&philo->print);
+}
 
 void	*round_table(void *arg)
 {
-	t_data	*data = (t_data *) arg;
-	pthread_mutex_t mutex;
-	unsigned int	eating_time;
-	unsigned int	time_sleep;
-	unsigned int	time_die;
-	
-	eating_time = data->data_args->time_to_eat;
-	time_sleep = data->data_args->time_to_sleep;
-	time_die = data->data_args->time_to_die;
-	
-	pthread_mutex_init(&mutex, NULL);
-	pthread_mutex_lock(&mutex);
-	while (eating_time > 0)
+	t_philosophers	*philo = (t_philosophers *) arg;
+	struct timeval start;
+	gettimeofday(&start, NULL);
+	philo->start_time = (start.tv_sec * 1000) + (start.tv_usec / 1000);
+	while (1)
 	{
-		printf("id_fork %d eating_time %d\n", *data->id_fork, eating_time);
-		eating_time--;
+		ft_eating(philo);
+		if(philo->number_of_times_each_philosopher_must_eat == 0)
+			break;
+		sleeping(philo);
+		thinking(philo);
 	}
-	pthread_mutex_unlock(&mutex);
-	
-	/*boucle pour le temps de sommeil*/
-	while (time_sleep > 0)
-	{
-		pthread_mutex_lock(&mutex);
-		printf("id_fork %d time_sleep %d\n", *data->id_fork, time_sleep);
-		pthread_mutex_unlock(&mutex);
-		time_sleep--;
-	}
-
-	/*boucle pour le temps avant la mort*/
-	while (time_die > 0)
-	{
-		pthread_mutex_lock(&mutex);
-		printf("id_fork %d time_die %d\n", *data->id_fork, time_die);
-		pthread_mutex_unlock(&mutex);
-		time_die--;
-	}
-	printf("Nous sommes dans le thread\n");
-	// int	*i;
-	// i = (int *) arg;
-	// (*i) = (*i) * 5;
-	// Arrêt propre du thread
 	pthread_exit(EXIT_SUCCESS);	
 }
 
-void	get_thread(t_data *data)
+int	get_thread(t_data *data)
 {
-	int	num_fork;
-	num_fork = data->data_args->number_of_philosophers;
-	data->id_fork = malloc(sizeof(int) * num_fork);
-	// data->id_fork[num_fork];
+	unsigned int	num_fork;
+
+	num_fork = data->data_philo->number_of_philosophers;
 	while (num_fork > 0)
 	{
-		// printf("numb of fork %d\n", num_fork);
-		pthread_create(&data->thread, NULL, round_table, data);
-		data->id_fork[num_fork - 1] = num_fork;
+		pthread_create(&data->data_philo[num_fork -1].thread_philo, NULL, round_table, &data->data_philo[num_fork - 1]);
 		num_fork--;
-		pthread_join(data->thread, NULL);
 	}
+	while (num_fork < data->data_philo->number_of_philosophers)
+	{
+		if (data->data_philo[num_fork].alive == false)
+		{
+			pthread_mutex_lock(&data->data_philo[num_fork].print);
+			printf("%ld\tLe philosophe %d est mort !\n", data->data_philo[num_fork].end_time, data->data_philo[num_fork].id_philosphers);
+			pthread_mutex_unlock(&data->data_philo[num_fork].print);
+			return(0);
+		}
+		num_fork++;
+		if(num_fork == data->data_philo->number_of_philosophers && data->data_philo->number_of_times_each_philosopher_must_eat > 0)
+			num_fork = 0;
+	}	
+	while (num_fork > 0)
+	{
+		pthread_join(data->data_philo[num_fork - 1].thread_philo, NULL);
+		num_fork--;
+	}
+	return (0);
 }
 
 int	main(int ac, char **av)
 {
 	t_data data;
-	if (!check_arg(ac, &data))
-	{
-		printf("Invalid number of arguments !\n");
+	if (!check_arg(ac, av))
 		return (1);
-	}
-	if (!init_arg(&data, av))
-	{
-		printf("One of the arguments is invalid !\n");
-		return (1);
-	}
-	// /* TEST usleep */
-	// unsigned int mSeconds = 1000000;
-    // int returnCode;
-    // returnCode = usleep(mSeconds);
-	// printf("temps ecoule en milisec -> %dmicrosecondes\nEn sec -> %dsec", mSeconds, mSeconds / 1000000 );
-	// printf("\nusleep result -> %d\n", returnCode);	
-	// /* TEST gettimeofday */
-	// struct timeval start;
-	// struct timeval end;
-
-	// /*
-	// start.tv_sec pour les secondes
-	// start.tv_usec pour les micro secondes
-	// idem pour end ...
-	// */
-
-
-	// gettimeofday(&start, NULL);
-   	// usleep(mSeconds);
-	// gettimeofday(&end, NULL);
-
-
-	// printf("temps passe entre :%f sec\n", time_diff(&start, &end));
-
-	/*TEST pthread_create*/
+	init_philo(&data, av);
+	// print_test_init(&data);
 	get_thread(&data);
-	// int	thread;
-	// int	i = 1;
-	// pthread_t thread1;
-	// printf("Avant la création du thread. i vaut : %i\n", i);
-
-	// /*Créer un thread*/
-	// thread = pthread_create(&thread1, NULL, thread_1, &i);
-	
-	// // /*Récupérer un thread ou le détacher*/
-	// pthread_join(thread1, NULL);
-	
-	// printf("La creation du thread renvoi : %d\n", thread);
-	// printf("Après la création du thread. i vaut : %i\n", i);
-	// for (unsigned int i = 0; i < data.data_args->number_of_philosophers; i++)
-	// {
-	// 	// printf("i -> %d\n", i);
-	// 	printf("id de la fourchette %d\n", data.id_fork[i]);
-	// 	/* code */
-	// }
-	
-	/*//////////////////////////////////////////////////*/
-	free_all(&data);
+	// free_all(&data);
 	return (0);
 }
