@@ -6,17 +6,18 @@
 /*   By: natrijau <natrijau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 12:05:00 by natrijau          #+#    #+#             */
-/*   Updated: 2024/04/02 16:58:41 by natrijau         ###   ########.fr       */
+/*   Updated: 2024/04/08 13:49:17 by natrijau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
-
+ 
 void	init_philo(t_data *data, char **av)
 {
 	int	i;
 	int	number_philo;
 	pthread_mutex_t	*mutex;
+	init_mutex(data, av);
 	number_philo = ft_atoi(av[1]);
 	mutex = malloc(sizeof(pthread_mutex_t) * number_philo);
 	data->data_philo = malloc(sizeof(t_philosophers) * number_philo);
@@ -32,7 +33,7 @@ void	init_philo(t_data *data, char **av)
 			data->data_philo[i].number_of_times_each_philosopher_must_eat = ft_atoi(av[5]);
 		data->data_philo[i].id_philosphers = i + 1;
 		data->data_philo[i].my_fork = mutex[i];
-		data->data_philo[i].alive = true;
+		data->data_philo[i].data = data;
 		data->data_philo[i].start_dead = 0;
 		data->data_philo[i].end_time = 0;
 		data->data_philo[i].next_fork = &data->data_philo[i + 1].my_fork;
@@ -42,13 +43,13 @@ void	init_philo(t_data *data, char **av)
 	free(mutex);
 }
 
-void	init_mutex(t_data *data)
+void	init_mutex(t_data *data, char **av)
 {
 	int	num_fork;
 	int	i;
 
 	i = 0;
-	num_fork = data->data_philo->number_of_philosophers;
+	num_fork = ft_atoi(av[1]);
 	while (i < num_fork)
 	{
 		// pthread_mutex_init(data->data_philo->sleep, NULL);

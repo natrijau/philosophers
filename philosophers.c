@@ -6,7 +6,7 @@
 /*   By: natrijau <natrijau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 14:05:09 by natrijau          #+#    #+#             */
-/*   Updated: 2024/04/02 16:56:31 by natrijau         ###   ########.fr       */
+/*   Updated: 2024/04/08 13:44:56 by natrijau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,19 @@ bool	check_arg(int ac, char **av)
 	return(true);
 }	
 
+void	all_dead(t_philosophers *philo)
+{
+	int	i;
+
+	i = philo->number_of_philosophers;
+	while (i > 0)
+	{
+		philo[i].data->alive = false;
+		printf("philoID %d\nalive ?%d\n",philo[i].id_philosphers, philo[i].data->alive );
+		i--;
+	}
+}
+
 void	check_dead(t_philosophers *philo, int flag)
 {
 	if (flag == 0)
@@ -46,7 +59,9 @@ void	check_dead(t_philosophers *philo, int flag)
 		if (philo->start_dead >= philo->time_to_die
 			|| philo->time_to_eat >= philo->time_to_die)
 		{
-			philo->alive = false;
+			all_dead(philo);
+			// printf("\teating\tLe philosophe %d alive ? %d\n",philo->id_philosphers, philo->alive);
+			// philo->alive = false;
 			philo->end_time = philo->time_to_die / 1000;
 		}
 		else
@@ -58,10 +73,12 @@ void	check_dead(t_philosophers *philo, int flag)
 		if (philo->start_dead >= philo->time_to_die
 			|| philo->time_to_sleep >= philo->time_to_die)
 		{
-			philo->alive = false;
-			philo->end_time = philo->time_to_die / 1000;
+			all_dead(philo);
+			// philo->alive = false;
+			// printf("\tsleeping\tLe philosophe %d alive ? %d\n",philo->id_philosphers, philo->alive);
+			philo->end_time = philo->time_to_die / 1000 + philo->time_to_eat / 1000;
 		}
-	}	
+	}
 }
 
 void	ft_usleep(t_philosophers *philo, long int mili_second)
@@ -74,7 +91,7 @@ void	ft_usleep(t_philosophers *philo, long int mili_second)
 
 	gettimeofday(&my_time, NULL);
 	current_time = (my_time.tv_sec * 1000) + (my_time.tv_usec / 1000);
-	// printf("current time %u\n", philo->time_to_die / 1000);
+	printf("current time %lu\n", current_time);
 	i = 0;
 	// printf("i %ld\n", i);
 	
@@ -100,10 +117,11 @@ void	ft_eating(t_philosophers *philo)
 	printf("%ld\tLe philosophe %d take second fork ! \n",current_time - philo->start_time,  philo->id_philosphers);
 	printf("%ld\tLe philosophe %d start eat \n",current_time - philo->start_time,  philo->id_philosphers);
 	philo->number_of_times_each_philosopher_must_eat--;
+	// ft_usleep(philo, philo->time_to_eat);
 	check_dead(philo, 0);
-	ft_usleep(philo, philo->time_to_eat);
 	pthread_mutex_unlock(&philo->print);
-	// usleep(philo->time_to_eat);
+	if (philo->data->alive == true)
+		usleep(philo->time_to_eat);
 	pthread_mutex_unlock(&philo->my_fork);
 	pthread_mutex_unlock(philo->next_fork);
 }
@@ -116,15 +134,22 @@ void	sleeping(t_philosophers *philo)
 	pthread_mutex_lock(&philo->print);
 	gettimeofday(&my_time, NULL);
 	current_time = (my_time.tv_sec * 1000) + (my_time.tv_usec / 1000);
-	printf("%ld\tLe philosophe %d sleep !\n",current_time - philo->start_time, philo->id_philosphers);
+	printf("%ld\tLe philosophe %d start sleep !\n",current_time - philo->start_time, philo->id_philosphers);
 	check_dead(philo, 1);
-	ft_usleep(philo, philo->time_to_sleep);
-    // usleep(philo->time_to_sleep);
+	if (philo->data->alive == true)
+	    usleep(philo->time_to_sleep);
+	// ft_usleep(philo, philo->time_to_sleep);
 	pthread_mutex_unlock(&philo->print);
 }
 
 void	thinking(t_philosophers *philo)
-{	struct timeval my_time;
+{
+	// if (philo->data->alive == false)
+	// {
+	// 	return;
+	// }
+	
+	struct timeval my_time;
   	long int current_time;
 	pthread_mutex_lock(&philo->print);
 	gettimeofday(&my_time, NULL);
@@ -139,13 +164,27 @@ void	*round_table(void *arg)
 	struct timeval start;
 	gettimeofday(&start, NULL);
 	philo->start_time = (start.tv_sec * 1000) + (start.tv_usec / 1000);
-	while (1)
+	while (philo->data->alive == true)
 	{
-		ft_eating(philo);
+		if (philo->data->alive == true)
+			ft_eating(philo);
+		if (philo->data->alive == false)
+		{
+			printf("%ld\teating Le philosophe %d est mort !\n", philo->end_time, philo->id_philosphers);
+			break;
+		}		
 		if(philo->number_of_times_each_philosopher_must_eat == 0)
 			break;
-		sleeping(philo);
-		thinking(philo);
+		printf("\t\t\t\tTEST\n\t\t\tvivant : %d\n", philo->data->alive);
+		if (philo->data->alive == true)
+			sleeping(philo);
+		if (philo->data->alive == false)
+		{
+			printf("%ld\tsleep Le philosophe %d est mort !\n", philo->end_time, philo->id_philosphers);
+			break;
+		}
+		else
+			thinking(philo);
 	}
 	pthread_exit(EXIT_SUCCESS);	
 }
@@ -160,23 +199,23 @@ int	get_thread(t_data *data)
 		pthread_create(&data->data_philo[num_fork -1].thread_philo, NULL, round_table, &data->data_philo[num_fork - 1]);
 		num_fork--;
 	}
+	// while (num_fork < data->data_philo->number_of_philosophers)
+	// {
+	// 	if (data->alive == false)
+	// 	{
+	// 		pthread_mutex_lock(&data->data_philo[num_fork].print);
+	// 		printf("%ld\tLe philosophe %d est mort !\n", data->data_philo[num_fork].end_time, data->data_philo[num_fork].id_philosphers);
+	// 		pthread_mutex_unlock(&data->data_philo[num_fork].print);
+	// 		return(0);
+	// 	}
+	// 	num_fork++;
+	// 	if(num_fork == data->data_philo->number_of_philosophers && data->data_philo->number_of_times_each_philosopher_must_eat > 0)
+	// 		num_fork = 0;
+	// }	
 	while (num_fork < data->data_philo->number_of_philosophers)
 	{
-		if (data->data_philo[num_fork].alive == false)
-		{
-			pthread_mutex_lock(&data->data_philo[num_fork].print);
-			printf("%ld\tLe philosophe %d est mort !\n", data->data_philo[num_fork].end_time, data->data_philo[num_fork].id_philosphers);
-			pthread_mutex_unlock(&data->data_philo[num_fork].print);
-			return(0);
-		}
+		pthread_join(data->data_philo[num_fork].thread_philo, NULL);
 		num_fork++;
-		if(num_fork == data->data_philo->number_of_philosophers && data->data_philo->number_of_times_each_philosopher_must_eat > 0)
-			num_fork = 0;
-	}	
-	while (num_fork > 0)
-	{
-		pthread_join(data->data_philo[num_fork - 1].thread_philo, NULL);
-		num_fork--;
 	}
 	return (0);
 }

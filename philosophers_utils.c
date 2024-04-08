@@ -6,16 +6,16 @@
 /*   By: natrijau <natrijau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 12:16:33 by natrijau          #+#    #+#             */
-/*   Updated: 2024/03/28 13:35:00 by natrijau         ###   ########.fr       */
+/*   Updated: 2024/04/02 17:26:56 by natrijau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-unsigned int	ft_atoi(const char *nptr)
+long int	ft_atoi(const char *nptr)
 {
-	unsigned int	i;
-	unsigned int	nb;
+	long int	i;
+	long int	nb;
 
 	i = 0;
 	nb = 0;

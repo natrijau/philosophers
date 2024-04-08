@@ -1,13 +1,13 @@
-NAME	 = philosophers
-CFLAGS	 = -Wall -Wextra -Werror -gdwarf-4 -g
-SRCS	 = philosophers.c philosophers_utils.c free.c init.c ##test.c
+NAME	 = Philo
+CFLAGS	 = -Wall -Wextra -Werror -g ##-fsanitize=thread -gdwarf-4 
+SRCS	 = philosophers.c philosophers_utils.c free.c init.c test.c
 OBJS	 = ${SRCS:.c=.o}
 
 %.o: %.c 
-	clang $(CFLAGS) $< -c -o $@ 
+	gcc $(CFLAGS) $< -c -o $@ 
 
 $(NAME) : $(OBJS)
-	clang -o $(NAME) $(OBJS)
+	gcc $(CFLAGS) -o $(NAME) $(OBJS)
 
 clean:
 	rm -rf $(OBJS)

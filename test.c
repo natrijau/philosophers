@@ -1,34 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free.c                                             :+:      :+:    :+:   */
+/*   test.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: natrijau <natrijau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/27 12:03:18 by natrijau          #+#    #+#             */
-/*   Updated: 2024/04/08 13:44:22 by natrijau         ###   ########.fr       */
+/*   Created: 2024/04/08 13:35:59 by natrijau          #+#    #+#             */
+/*   Updated: 2024/04/08 13:42:15 by natrijau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-void	free_split(int	**tab)
-{
-	int	i;
 
-	i = 0;
-	while (tab[i])
+//test init philo
+void	print_test_init(t_data *data)
+{
+	for (size_t i = 0; i < data->data_philo->number_of_philosophers; i++)
 	{
-		free(tab[i]);
-		i++;
+		printf("idphilo -> %d\n", data->data_philo[i].id_philosphers);
+		printf("alive ? -> %d\n", data->data_philo[i].data->alive);
 	}
-	free(tab);
-}
-
-void	free_all(t_data *data)
-{
-	if (!data)
-		return;
-	// int	nb_philo = data->data_philo->number_of_philosophers;
-	free(data->data_philo);		
+	
 }
