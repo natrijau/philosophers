@@ -44,11 +44,11 @@ typedef struct s_philosophers
 typedef struct s_data
 {
 	int				dead_id;
-	bool			alive;
+	// bool			alive;
 	// pthread_t		thread;
-	pthread_mutex_t	mutex;
-	pthread_mutex_t	*eat;
-	pthread_mutex_t	*dead;
+	pthread_mutex_t	*mutex;
+	pthread_mutex_t	eat;
+	pthread_mutex_t	dead;
 	pthread_mutex_t	print;
 	t_philosophers	*data_philo;
 } t_data;
@@ -64,9 +64,13 @@ void	free_all(t_data *data);
 
 /*init.c*/
 void	init_philo(t_data *data, char **av);
-void	init_mutex(t_data *data, char **av);
+void	init_thread(t_data *data, int number_philo);
+// void	init_mutex(t_data *data, char **av);
 
 /*DEL AFTER -- test.c*/
 void	print_test_init(t_data *data);
+
+long int	my_time();
+
 
 #endif 
