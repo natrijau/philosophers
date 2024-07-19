@@ -6,7 +6,7 @@
 /*   By: natrijau <natrijau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 12:03:18 by natrijau          #+#    #+#             */
-/*   Updated: 2024/04/08 13:44:22 by natrijau         ###   ########.fr       */
+/*   Updated: 2024/07/19 13:43:04 by natrijau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,11 @@ void	free_split(int	**tab)
 void	free_all(t_data *data)
 {
 	if (!data)
-		return;
-	// int	nb_philo = data->data_philo->number_of_philosophers;
-	free(data->data_philo);		
+		return ;
+	if (data->mutex)
+		free(data->mutex);
+	if (data->data_philo)
+		free(data->data_philo);
+	if (data->nb_eat)
+		free(data->nb_eat);
 }

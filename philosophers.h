@@ -1,5 +1,19 @@
-#ifndef		PHILOSOPHERS_H
-# define	PHILOSOPHERS_H
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philosophers.h                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: natrijau <natrijau@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/19 14:29:29 by natrijau          #+#    #+#             */
+/*   Updated: 2024/07/19 14:32:12 by natrijau         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef PHILOSOPHERS_H
+# define PHILOSOPHERS_H
+# define LOCK	pthread_mutex_lock
+# define UNLOCK	pthread_mutex_unlock
 
 /*printf*/
 # include <stdio.h>
@@ -19,8 +33,8 @@
 /*thread*/
 # include <pthread.h>
 
-typedef struct s_philosophers t_philosophers;
-typedef struct s_data	t_data;
+typedef struct s_philosophers	t_philosophers;
+typedef struct s_data			t_data;
 
 typedef struct s_philosophers
 {
@@ -28,49 +42,62 @@ typedef struct s_philosophers
 	unsigned int	time_to_die;
 	unsigned int	time_to_eat;
 	unsigned int	time_to_sleep;
-	unsigned int	number_of_times_each_philosopher_must_eat;
+	unsigned int	nb_max_meal;
 	unsigned int	id_philosphers;
-	long int		start_time;
 	long int		end_time;
 	long int		start_dead;
-	// bool			alive;
 	pthread_t		thread_philo;
 	pthread_mutex_t	my_fork;
 	pthread_mutex_t	*next_fork;
-	pthread_mutex_t	print;
+	pthread_mutex_t	nb_eat;
+	pthread_mutex_t	last_eat;
 	t_data			*data;
-} t_philosophers;
+}	t_philosophers;
 
 typedef struct s_data
 {
 	int				dead_id;
-	// bool			alive;
-	// pthread_t		thread;
+	long int		start_time;
 	pthread_mutex_t	*mutex;
-	pthread_mutex_t	eat;
+	pthread_mutex_t	*nb_eat;
 	pthread_mutex_t	dead;
 	pthread_mutex_t	print;
 	t_philosophers	*data_philo;
-} t_data;
+}	t_data;
+
+/*philosopher.c*/
+bool			check_arg(int ac, char **av);
+int				get_thread(t_data *data);
+int				main(int ac, char **av);
 
 /*philosophers_utils.c*/
+long int		my_time(void);
+void			print_alone(t_data *data);
+void			print_dead(t_philosophers *philo, long int start);
+void			print_message(t_philosophers *philo, char *action);
+void			ft_usleep(t_philosophers *philo, long int mili_second);
+
+/*free.c*/
+void			free_split(int	**tab);
+void			free_all(t_data *data);
+
+/*init.c*/
+void			ft_bzero(void *s, size_t n);
+void			init_philo(t_data *data, char **av);
+int				init_thread(t_data *data, int number_philo);
+
+/*lib.c*/
 long int		ft_atoi(const char *nptr);
 bool			its_integer(char *str);
 bool			all_positiv_num(char **av);
 
-/*free.c*/
-void	free_split(int	**tab);
-void	free_all(t_data *data);
-
-/*init.c*/
-void	init_philo(t_data *data, char **av);
-void	init_thread(t_data *data, int number_philo);
-// void	init_mutex(t_data *data, char **av);
+/*thread.c*/
+bool			check_dead_and_meal(t_philosophers *philo);
+void			ft_eating(t_philosophers *philo);
+void			sleeping(t_philosophers *philo);
+void			thinking(t_philosophers *philo);
+void			*round_table(void *arg);
 
 /*DEL AFTER -- test.c*/
-void	print_test_init(t_data *data);
-
-long int	my_time();
-
-
+void			print_test_init(t_data *data);
 #endif 
