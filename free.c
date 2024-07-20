@@ -12,23 +12,30 @@
 
 #include "philosophers.h"
 
-void	free_split(int	**tab)
+void	destroy_mutex_philo(t_data *data)
 {
-	int	i;
+	unsigned int	i;
 
-	i = 0;
-	while (tab[i])
+	i = 1;
+	if (!data->data_philo->number_of_philosophers)
+		return ;
+	while (i < data->data_philo->number_of_philosophers)
 	{
-		free(tab[i]);
+		if (&data->data_philo[i].nb_eat)
+			pthread_mutex_destroy(&data->data_philo[i].nb_eat);
 		i++;
 	}
-	free(tab);
 }
 
 void	free_all(t_data *data)
 {
 	if (!data)
 		return ;
+	// if (&data->print)
+	// 	pthread_mutex_destroy(&data->print);
+	// if (&data->dead)
+	// 	pthread_mutex_destroy(&data->dead);
+	// destroy_mutex_philo(data);
 	if (data->mutex)
 		free(data->mutex);
 	if (data->data_philo)

@@ -56,9 +56,11 @@ int	get_thread(t_data *data)
 	i = 0;
 	while (i < nb_philo)
 	{
-		pthread_create(&threads[i], NULL, round_table, &data->data_philo[i]);
+		pthread_join(threads[i], NULL);
 		i++;
 	}
+	if (data->dead_id == 1)
+		printf("%ld %d dead\n", data->time_die, data->id_philo_die);
 	free(threads);
 	return (0);
 }

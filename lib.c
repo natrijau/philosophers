@@ -12,6 +12,21 @@
 
 #include "philosophers.h"
 
+void	*ft_calloc(size_t nmemb, size_t size)
+{
+	unsigned char	*tab;
+
+	if (nmemb > 65535 && size > 65535)
+		return (NULL);
+	if (nmemb * size > 2147483647)
+		return (NULL);
+	tab = malloc(nmemb * size);
+	if (!tab)
+		return (NULL);
+	ft_bzero((void *)tab, nmemb * size);
+	return ((void *)tab);
+}
+
 long int	ft_atoi(const char *nptr)
 {
 	long int	i;

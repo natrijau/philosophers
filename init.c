@@ -47,7 +47,6 @@ void	init_philo(t_data *data, char **av)
 		data->data_philo[i].data = data;
 		data->data_philo[i].start_dead = 0;
 		pthread_mutex_init(&data->data_philo[i].nb_eat, NULL);
-		pthread_mutex_init(&data->data_philo[i].last_eat, NULL);
 		pthread_mutex_init(&data->mutex[i], NULL);
 		data->data_philo[i].next_fork = &data->data_philo[i + 1].my_fork;
 		i++;
@@ -58,19 +57,19 @@ void	init_philo(t_data *data, char **av)
 int	init_thread(t_data *data, int number_philo)
 {
 	ft_bzero(data, sizeof(t_data));
-	data->mutex = calloc(sizeof(pthread_mutex_t), number_philo);
+	data->mutex = ft_calloc(sizeof(pthread_mutex_t), number_philo);
 	if (!data->mutex)
 	{
 		printf("Error malloc\n");
 		return (1);
 	}
-	data->nb_eat = calloc(sizeof(pthread_mutex_t), number_philo);
+	data->nb_eat = ft_calloc(sizeof(pthread_mutex_t), number_philo);
 	if (!data->nb_eat)
 	{
 		printf("Error malloc\n");
 		return (1);
 	}
-	data->data_philo = calloc(sizeof(t_philosophers), number_philo);
+	data->data_philo = ft_calloc(sizeof(t_philosophers), number_philo);
 	if (!data->data_philo)
 	{
 		printf("Error malloc\n");
@@ -78,6 +77,8 @@ int	init_thread(t_data *data, int number_philo)
 	}
 	data->dead_id = 0;
 	data->start_time = my_time();
+	data->time_die = 0;
+	data->id_philo_die = 0;
 	pthread_mutex_init(&data->print, NULL);
 	pthread_mutex_init(&data->dead, NULL);
 	return (0);
