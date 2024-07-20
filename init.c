@@ -76,8 +76,6 @@ int	init_thread(t_data *data, int number_philo)
 		return (1);
 	}
 	data->dead_id = 0;
-	data->time_die = 0;
-	data->id_philo_die = 0;
 	pthread_mutex_init(&data->print, NULL);
 	pthread_mutex_init(&data->time, NULL);
 	pthread_mutex_init(&data->dead, NULL);

@@ -38,7 +38,6 @@ void	print_dead(t_philosophers *philo)
 	LOCK(&philo->data->print);
 	printf("%ld %d died\n", actual_time, philo->id_philosphers);
 	UNLOCK(&philo->data->print);
-	philo->data->id_philo_die = philo->id_philosphers;
 	UNLOCK(&philo->data->dead);
 }
 
@@ -55,7 +54,6 @@ void	print_message(t_philosophers *philo, char *action)
 		UNLOCK(&philo->data->dead);
 		LOCK(&philo->data->print);
 		printf("%ld %d %s", actual_time, philo->id_philosphers, action);
-		philo->data->time_die = actual_time;
 		UNLOCK(&philo->data->print);
 		return ;
 	}

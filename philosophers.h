@@ -55,8 +55,6 @@ typedef struct s_data
 {
 	int				dead_id;
 	long int		start_time;
-	long int		time_die;
-	unsigned int	id_philo_die;
 	pthread_mutex_t	*mutex;
 	pthread_mutex_t	*nb_eat;
 	pthread_mutex_t	time;
