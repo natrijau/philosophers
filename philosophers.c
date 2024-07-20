@@ -47,9 +47,11 @@ int	get_thread(t_data *data)
 
 	nb_philo = data->data_philo->number_of_philosophers;
 	threads = malloc(nb_philo * sizeof(pthread_t));
+	data->start_time = my_time();
 	i = 0;
 	while (i < nb_philo)
 	{
+		data->data_philo[i].start_dead = data->start_time;
 		pthread_create(&threads[i], NULL, round_table, &data->data_philo[i]);
 		i++;
 	}
@@ -59,8 +61,6 @@ int	get_thread(t_data *data)
 		pthread_join(threads[i], NULL);
 		i++;
 	}
-	if (data->dead_id == 1)
-		printf("%ld %d dead\n", data->time_die, data->id_philo_die);
 	free(threads);
 	return (0);
 }

@@ -59,6 +59,7 @@ typedef struct s_data
 	unsigned int	id_philo_die;
 	pthread_mutex_t	*mutex;
 	pthread_mutex_t	*nb_eat;
+	pthread_mutex_t	time;
 	pthread_mutex_t	dead;
 	pthread_mutex_t	print;
 	t_philosophers	*data_philo;

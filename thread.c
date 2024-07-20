@@ -33,15 +33,16 @@ bool	check_dead_and_meal(t_philosophers *philo)
 
 void	ft_eating(t_philosophers *philo)
 {
+
+	LOCK(&philo->my_fork);
+	print_message(philo, "has taken a fork\n");
+	LOCK(philo->next_fork);
+	print_message(philo, "has taken a fork\n");
+	print_message(philo, "is eating\n");
 	LOCK(&philo->data->dead);
 	philo->start_dead = my_time();
 	UNLOCK(&philo->data->dead);
-	LOCK(&philo->my_fork);
-	print_message(philo, "take fork\n");
-	LOCK(philo->next_fork);
-	print_message(philo, "take fork\n");
-	print_message(philo, "eat\n");
-	ft_usleep(philo, philo->time_to_eat);
+	ft_usleep(philo, philo->time_to_eat );
 	// if (philo->id_philosphers % 2 == 0)
 	// {
 	// 	UNLOCK(&philo->my_fork);
@@ -58,20 +59,19 @@ void	ft_eating(t_philosophers *philo)
 void	sleeping(t_philosophers *philo)
 {
 	
-	print_message(philo, "start sleeping\n");
+	print_message(philo, "is sleeping\n");
 	ft_usleep(philo, philo->time_to_sleep);
 	// LOCK(&philo->data->print);
 	// printf("\ndead id %d\n", philo->data->dead_id);
 	// UNLOCK(&philo->data->print);	
 	// print_message(philo, "thinking\n");
-	// usleep(100);
+	// if (philo->number_of_philosophers % 2 == 1)
+	// 	ft_usleep(philo, 15000);
 }
 
 void	thinking(t_philosophers *philo)
 {
-	if (check_dead_and_meal(philo))
-		return ;
-	print_message(philo, "thinking\n");
+	print_message(philo, "is thinking\n");
 }
 
 void	*round_table(void *arg)
@@ -83,7 +83,10 @@ void	*round_table(void *arg)
 	philo->start_dead = my_time();
 	UNLOCK(&philo->data->dead);
 	if (philo->id_philosphers % 2 == 0)
+	{
 		usleep(100);	
+		print_message(philo, "is thinking\n");
+	}
 	while (1)
 	{
 		if (check_dead_and_meal(philo))

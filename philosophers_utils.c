@@ -24,12 +24,20 @@ long int	my_time(void)
 
 void	print_alone(t_data *data)
 {
-	printf("0 1 take fork\n");
-	printf("%d 1 dead\n", data->data_philo->time_to_die / 1000);
+	printf("0 1 has taken a fork\n");
+	printf("%d 1 died\n", data->data_philo->time_to_die / 1000);
 }
 
 void	print_dead(t_philosophers *philo)
 {
+	long int	actual_time;
+
+	LOCK(&philo->data->time);
+	actual_time = my_time() - philo->data->start_time;
+	UNLOCK(&philo->data->time);
+	LOCK(&philo->data->print);
+	printf("%ld %d died\n", actual_time, philo->id_philosphers);
+	UNLOCK(&philo->data->print);
 	philo->data->id_philo_die = philo->id_philosphers;
 	UNLOCK(&philo->data->dead);
 }
@@ -38,9 +46,9 @@ void	print_message(t_philosophers *philo, char *action)
 {
 	long int	actual_time;
 
-	LOCK(&philo->data->dead);
+	LOCK(&philo->data->time);
 	actual_time = my_time() - philo->data->start_time;
-	UNLOCK(&philo->data->dead);
+	UNLOCK(&philo->data->time);
 	LOCK(&philo->data->dead);
 	if (philo->data->dead_id != 1)
 	{
@@ -58,10 +66,10 @@ void	ft_usleep(t_philosophers *philo, long int mili_second)
 {
 	long int	start;
 
-	LOCK(&philo->data->dead);
+	LOCK(&philo->data->time);
 	start = my_time();
-	UNLOCK(&philo->data->dead);
-	while (my_time() - start <= mili_second / 1000)
+	UNLOCK(&philo->data->time);
+	while (my_time() - start < mili_second / 1000)
 	{
 		usleep(100);
 		LOCK(&philo->data->dead);
