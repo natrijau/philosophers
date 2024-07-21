@@ -6,7 +6,7 @@
 /*   By: natrijau <natrijau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/19 14:29:29 by natrijau          #+#    #+#             */
-/*   Updated: 2024/07/19 14:32:12 by natrijau         ###   ########.fr       */
+/*   Updated: 2024/07/21 16:18:04 by natrijau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ typedef struct s_philosophers
 	long int		start_dead;
 	pthread_mutex_t	my_fork;
 	pthread_mutex_t	*next_fork;
-	pthread_mutex_t	nb_eat;
 	t_data			*data;
 }	t_philosophers;
 
@@ -55,8 +54,10 @@ typedef struct s_data
 {
 	int				dead_id;
 	long int		start_time;
+	long int		hour_of_death;
+	unsigned int	id_philo_death;
+	unsigned int	all_philo_eat;
 	pthread_mutex_t	*mutex;
-	pthread_mutex_t	*nb_eat;
 	pthread_mutex_t	time;
 	pthread_mutex_t	dead;
 	pthread_mutex_t	print;
@@ -75,10 +76,8 @@ void			print_dead(t_philosophers *philo);
 void			print_message(t_philosophers *philo, char *action);
 void			ft_usleep(t_philosophers *philo, long int mili_second);
 
-/*free.c*/
-void			free_all(t_data *data);
-
 /*init.c*/
+int				print_error(t_data *data, int flag);
 void			ft_bzero(void *s, size_t n);
 void			init_philo(t_data *data, char **av);
 int				init_thread(t_data *data, int number_philo);
@@ -90,12 +89,13 @@ bool			its_integer(char *str);
 bool			all_positiv_num(char **av);
 
 /*thread.c*/
+bool			life_time_limit_test(t_philosophers *philo, int flag);
 bool			check_dead_and_meal(t_philosophers *philo);
 void			ft_eating(t_philosophers *philo);
 void			sleeping(t_philosophers *philo);
-void			thinking(t_philosophers *philo);
 void			*round_table(void *arg);
 
-/*DEL AFTER -- test.c*/
-void			print_test_init(t_data *data);
+/*free.c*/
+void			free_all(t_data *data);
+
 #endif 

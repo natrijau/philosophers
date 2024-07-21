@@ -6,7 +6,7 @@
 /*   By: natrijau <natrijau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 12:16:33 by natrijau          #+#    #+#             */
-/*   Updated: 2024/07/19 14:38:33 by natrijau         ###   ########.fr       */
+/*   Updated: 2024/07/21 17:46:54 by natrijau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ long int	my_time(void)
 void	print_alone(t_data *data)
 {
 	printf("0 1 has taken a fork\n");
+	usleep(data->data_philo->time_to_die / 1000);
 	printf("%d 1 died\n", data->data_philo->time_to_die / 1000);
 }
 
@@ -35,10 +36,8 @@ void	print_dead(t_philosophers *philo)
 	LOCK(&philo->data->time);
 	actual_time = my_time() - philo->data->start_time;
 	UNLOCK(&philo->data->time);
-	LOCK(&philo->data->print);
-	printf("%ld %d died\n", actual_time, philo->id_philosphers);
-	UNLOCK(&philo->data->print);
-	UNLOCK(&philo->data->dead);
+	philo->data->hour_of_death = actual_time;
+	philo->data->id_philo_death = philo->id_philosphers;
 }
 
 void	print_message(t_philosophers *philo, char *action)
@@ -69,18 +68,21 @@ void	ft_usleep(t_philosophers *philo, long int mili_second)
 	UNLOCK(&philo->data->time);
 	while (my_time() - start < mili_second / 1000)
 	{
-		usleep(100);
+		usleep(500);
 		LOCK(&philo->data->dead);
 		if (philo->data->dead_id == 1)
 		{
 			UNLOCK(&philo->data->dead);
 			break ;
 		}
+		// UNLOCK(&philo->data->dead);
+		// LOCK(&philo->data->dead);
 		if (philo->data->dead_id == 0)
 		{
 			if ((my_time() > philo->start_dead + philo->time_to_die / 1000))
 			{
 				philo->data->dead_id = 1;
+				UNLOCK(&philo->data->dead);
 				print_dead(philo);
 				break ;
 			}
