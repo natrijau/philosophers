@@ -51,9 +51,7 @@ void	print_message(t_philosophers *philo, char *action)
 	if (philo->data->dead_id != 1)
 	{
 		UNLOCK(&philo->data->dead);
-		LOCK(&philo->data->print);
 		printf("%ld %d %s", actual_time, philo->id_philosphers, action);
-		UNLOCK(&philo->data->print);
 		return ;
 	}
 	UNLOCK(&philo->data->dead);
@@ -79,7 +77,7 @@ void	ft_usleep(t_philosophers *philo, long int mili_second)
 		// LOCK(&philo->data->dead);
 		if (philo->data->dead_id == 0)
 		{
-			if ((my_time() > philo->start_dead + philo->time_to_die / 1000))
+			if ((my_time() > philo->time_last_eat + philo->time_to_die / 1000))
 			{
 				philo->data->dead_id = 1;
 				UNLOCK(&philo->data->dead);

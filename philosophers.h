@@ -44,7 +44,7 @@ typedef struct s_philosophers
 	unsigned int	time_to_sleep;
 	unsigned int	nb_max_meal;
 	unsigned int	id_philosphers;
-	long int		start_dead;
+	long int		time_last_eat;
 	pthread_mutex_t	my_fork;
 	pthread_mutex_t	*next_fork;
 	t_data			*data;

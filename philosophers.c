@@ -51,49 +51,11 @@ int	get_thread(t_data *data)
 	i = 0;
 	while (i < nb_philo)
 	{
-		data->data_philo[i].start_dead = data->start_time;
+		data->data_philo[i].time_last_eat = data->start_time;
 		pthread_create(&threads[i], NULL, round_table, &data->data_philo[i]);
 		i++;
 	}
-	i = 0;
-	// while (1)
-	// {
-	// 	if (my_time() > philo->start_dead + philo->time_to_die / 1000)
-	// 	{
-	// 		LOCK(&philo->data->dead);
-	// 		if (philo->data->dead_id == 0)
-	// 		{
-	// 			philo->data->dead_id = 1;
-	// 			UNLOCK(&philo->data->dead);
-	// 			if (flag == 1)
-	// 			{
-	// 				if ((philo->id_philosphers % 2 == 0) && (philo->number_of_philosophers % 2 == 0)
-	// 					&& (philo->number_of_philosophers == philo->id_philosphers))
-	// 					UNLOCK(philo->next_fork);
-	// 				else
-	// 					UNLOCK(&philo->my_fork);
-	// 			}
-	// 			if (flag == 2)
-	// 			{
-	// 				if ((philo->id_philosphers % 2 == 0) && (philo->number_of_philosophers % 2 == 0)
-	// 					&& (philo->number_of_philosophers == philo->id_philosphers))
-	// 				{
-	// 					UNLOCK(&philo->my_fork);
-	// 					UNLOCK(philo->next_fork);				
-	// 				}
-	// 				else
-	// 				{
-	// 					UNLOCK(philo->next_fork);
-	// 					UNLOCK(&philo->my_fork);
-	// 				}
-	// 			}
-	// 			print_dead(philo);
-	// 			return (false);
-	// 		}
-	// 		UNLOCK(&philo->data->dead);
-	// 	}
-	// 	return (true);
-	// }		
+	i = 0;	
 	while (i < nb_philo)
 	{
 		pthread_join(threads[i], NULL);

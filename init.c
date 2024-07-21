@@ -60,7 +60,7 @@ void	init_philo(t_data *data, char **av)
 		data->data_philo[i].id_philosphers = i + 1;
 		data->data_philo[i].my_fork = data->mutex[i];
 		data->data_philo[i].data = data;
-		data->data_philo[i].start_dead = 0;
+		data->data_philo[i].time_last_eat = 0;
 		pthread_mutex_init(&data->mutex[i], NULL);
 		data->data_philo[i].next_fork = &data->data_philo[i + 1].my_fork;
 		i++;
