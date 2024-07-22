@@ -59,7 +59,7 @@ void	print_message(t_philosophers *philo, char *action)
 	UNLOCK(&philo->data->dead);
 }
 
-void	ft_usleep(t_philosophers *philo, long int mili_second)
+bool	ft_usleep(t_philosophers *philo, long int mili_second)
 {
 	long int	start;
 
@@ -73,7 +73,7 @@ void	ft_usleep(t_philosophers *philo, long int mili_second)
 		if (philo->data->dead_id == 1)
 		{
 			UNLOCK(&philo->data->dead);
-			break ;
+			return (false) ;
 		}
 		// UNLOCK(&philo->data->dead);
 		// LOCK(&philo->data->dead);
@@ -84,9 +84,10 @@ void	ft_usleep(t_philosophers *philo, long int mili_second)
 				philo->data->dead_id = 1;
 				UNLOCK(&philo->data->dead);
 				print_dead(philo);
-				break ;
+				return (false) ;
 			}
 		}
 		UNLOCK(&philo->data->dead);
 	}
+	return (true) ;
 }

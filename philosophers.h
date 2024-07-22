@@ -74,7 +74,7 @@ long int		my_time(void);
 void			print_alone(t_data *data);
 void			print_dead(t_philosophers *philo);
 void			print_message(t_philosophers *philo, char *action);
-void			ft_usleep(t_philosophers *philo, long int mili_second);
+bool			ft_usleep(t_philosophers *philo, long int mili_second);
 
 /*init.c*/
 int				print_error(t_data *data, int flag);
