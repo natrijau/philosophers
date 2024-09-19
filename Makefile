@@ -1,26 +1,27 @@
 NAME	 = philo
-CFLAGS	 = -Wall -Wextra -Werror -g ##-lpthread -pthread -gdwarf-4 
+CFLAGS	 = -Wall -Wextra -Werror ## -g -gdwarf-4 -lpthread
 SRCS	 = 	philosophers.c\
 			philosophers_utils.c\
 			free.c\
 			init.c\
 			lib.c\
-			thread.c
+			thread.c\
+			thread_utils.c
 OBJS	 = ${SRCS:.c=.o}
 
 %.o: %.c 
-	gcc $(CFLAGS) $< -c -o $@ 
+	cc $(CFLAGS) $< -c -o $@ 
 
 $(NAME) : $(OBJS)
-	gcc $(CFLAGS) -o $(NAME) $(OBJS)
+	cc $(CFLAGS) -o $(NAME) $(OBJS)
+
+all: $(NAME)
 
 clean:
 	rm -rf $(OBJS)
 
 fclean: clean
 	rm -rf $(NAME)
-
-all: $(NAME)
 
 re: fclean all
 

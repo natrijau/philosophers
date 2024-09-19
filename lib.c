@@ -6,7 +6,7 @@
 /*   By: natrijau <natrijau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/19 14:15:24 by natrijau          #+#    #+#             */
-/*   Updated: 2024/07/19 14:16:02 by natrijau         ###   ########.fr       */
+/*   Updated: 2024/09/12 13:34:21 by natrijau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,12 @@ bool	all_positiv_num(char **av)
 	long int	args;
 
 	i = 1;
+	if (ft_atoi(av[1]) <= 0)
+		return (false);
 	while (i <= 4)
 	{
 		args = ft_atoi(av[i]);
-		if (args < 0)
+		if (args <= 0)
 			return (false);
 		i++;
 	}

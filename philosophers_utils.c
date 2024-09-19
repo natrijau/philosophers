@@ -6,7 +6,7 @@
 /*   By: natrijau <natrijau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 12:16:33 by natrijau          #+#    #+#             */
-/*   Updated: 2024/07/21 17:46:54 by natrijau         ###   ########.fr       */
+/*   Updated: 2024/09/12 12:03:01 by natrijau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	print_message(t_philosophers *philo, char *action)
 	UNLOCK(&philo->data->dead);
 }
 
-bool	ft_usleep(t_philosophers *philo, long int mili_second)
+bool	ft_usleep(t_philosophers *philo, long int mili_second, int flag)
 {
 	long int	start;
 
@@ -73,21 +73,11 @@ bool	ft_usleep(t_philosophers *philo, long int mili_second)
 		if (philo->data->dead_id == 1)
 		{
 			UNLOCK(&philo->data->dead);
-			return (false) ;
-		}
-		// UNLOCK(&philo->data->dead);
-		// LOCK(&philo->data->dead);
-		if (philo->data->dead_id == 0)
-		{
-			if ((my_time() > philo->start_dead + philo->time_to_die / 1000))
-			{
-				philo->data->dead_id = 1;
-				UNLOCK(&philo->data->dead);
-				print_dead(philo);
-				return (false) ;
-			}
+			if (flag == 2)
+				unlock_two_fork(philo);
+			return (false);
 		}
 		UNLOCK(&philo->data->dead);
 	}
-	return (true) ;
+	return (true);
 }

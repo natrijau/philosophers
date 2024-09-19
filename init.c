@@ -6,7 +6,7 @@
 /*   By: natrijau <natrijau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 12:05:00 by natrijau          #+#    #+#             */
-/*   Updated: 2024/07/21 16:17:30 by natrijau         ###   ########.fr       */
+/*   Updated: 2024/07/22 17:41:34 by natrijau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void	init_philo(t_data *data, char **av)
 		i++;
 	}
 	data->data_philo[i - 1].next_fork = &data->data_philo[0].my_fork;
-	data->all_philo_eat = number_philo * data->data_philo[0].nb_max_meal;
+	data->nb_philo_eat = 0;
 }
 
 int	init_thread(t_data *data, int number_philo)
@@ -82,6 +82,7 @@ int	init_thread(t_data *data, int number_philo)
 	data->hour_of_death = 0;
 	data->id_philo_death = 0;
 	pthread_mutex_init(&data->print, NULL);
+	pthread_mutex_init(&data->meal, NULL);
 	pthread_mutex_init(&data->time, NULL);
 	pthread_mutex_init(&data->dead, NULL);
 	return (0);
